@@ -1,0 +1,3 @@
+gluonts
+lightning==2.4.0
+pytorchts @ git+https://github.com/zalandoresearch/pytorch-ts.git@e359530a11c13e34fb57f6ceaff6542e57205e50
