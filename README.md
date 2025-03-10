@@ -8,7 +8,7 @@
 Our repo is built built in Python 3.11 using PyTorch. We recommend using the following commands to install the required requirements:
 ```shell script
 conda create -n variational python=3.11
-pip install --upgrade pip
+conda activate variational
 pip install -r requirements.txt 
 ``` 
 Additionally if you wish to run the time series experiments you can run:
@@ -18,7 +18,7 @@ pip install -r time_series/requirements.txt
 ``` 
 ## Checkpoints
 
-We provide pre-trained CLD-SGM checkpoints for CIFAR-10 and CelebA-HQ-256 [here](https://drive.google.com/drive/folders/1kettzSTqJnLCFqEvpFBxR3FbF1H2JtRm).
+We provide our pre-trained checkpoint for CIFAR-10 [here](https://drive.google.com/drive/folders/1kettzSTqJnLCFqEvpFBxR3FbF1H2JtRm).
 
 ## Training and evaluation
 
@@ -28,6 +28,10 @@ We provide pre-trained CLD-SGM checkpoints for CIFAR-10 and CelebA-HQ-256 [here]
 
 ```shell script
 torchrun --nproc-per-node 4 training.py --dir experiments/cifar/ --batch_size 256 
+```
+The first time you do multi-gpu training you will have issues with downloading the dataset. To bypass this simply run:
+```shell script
+python utils/dataset_utils.py --dataset cifar
 ```
 
 We monitor the training process using wandb, optionally you can disable it by using the `--disable_wandb` flag. To resume training use the `--load_from_ckpt` flag with a path to the snapshot. Other flags can be found in the click header of the training file. 

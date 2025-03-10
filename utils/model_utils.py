@@ -40,7 +40,7 @@ class PrecondGeneral(nn.Module):
             scale, L = self.sde.get_transition_params(zt,t.view(-1,*ones))
 
         if isinstance(self.sde, LinearMomentumSchrodingerBridge):
-            lvv = L[...,0,0], L[...,0,1], L[...,1,1]
+            _, _, lvv = L[...,0,0], L[...,0,1], L[...,1,1]
         
             return - self.net(zt,t * 999,cond)/lvv
         

@@ -71,7 +71,7 @@ def training(**opts):
     print(f"Backward Model parameters: {sum(p.numel() for p in model_backward.parameters() if p.requires_grad)//1e6} M")
     snapshot = torch.load(opts.load_from_ckpt, weights_only=True)
     if use_ema:
-        model_backward.ema.load_state_dict(snapshot['backward_ema'], strict=True)
+        model_backward.load_state_dict(snapshot['backward_ema'], strict=True)
     else:
         model_backward.load_state_dict(snapshot['backward'], strict=True)
 

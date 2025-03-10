@@ -49,7 +49,7 @@ def is_sb_sde(name):
     return (name in ['vsdm','linear-momentum-sb'])
 
 @click.command()
-@click.option('--dataset',type=click.Choice(['mnist','cifar','fashion','spiral','checkerboard']), default='cifar')
+@click.option('--dataset',type=click.Choice(['mnist','cifar','fashion']), default='cifar')
 @click.option('--model_forward',type=click.Choice(['linear']), default='linear')
 @click.option('--model_backward',type=click.Choice(['mlp','unet']), default='unet')
 @click.option('--precondition', is_flag=True, default=True)
@@ -120,17 +120,18 @@ def training(**opts):
     
     start_iter = 0
     if opts.load_from_ckpt is not None:
-        start_iter = int(opts.load_from_ckpt.split('_')[-1])
         print(f'Loading checkpoint at {opts.load_from_ckpt}, now starting at {start_iter}')
-        model_backward.module.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'backward.pt'), weights_only=True))
-        ema_backward.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'backward_ema.pt'), weights_only=True))
-        opt_b.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'opt_b.pt'), weights_only=True))
-        sched_b.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'sched_b.pt'), weights_only=True))
+        snapshot = torch.load(opts.load_from_ckpt, weights_only=True)
+        # start_iter = snapshot['itr']
+        model_backward.module.load_state_dict(snapshot['backward'])
+        ema_backward.ema.load_state_dict(snapshot['backward_ema'])
+        opt_b.load_state_dict(snapshot['opt_b'])
+        sched_b.load_state_dict(snapshot['sched_b'])
         if is_sb:
-            model_forward.module.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'forward.pt'), weights_only=True))
-            ema_forward.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'forward_ema.pt'), weights_only=True))
-            opt_f.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'opt_f.pt'), weights_only=True))
-            sched_f.load_state_dict(torch.load(os.path.join(opts.load_from_ckpt,'sched_f.pt'), weights_only=True))
+            model_forward.module.load_state_dict(snapshot['forward'])
+            ema_forward.ema.load_state_dict(snapshot['forward_ema'])
+            opt_f.load_state_dict(snapshot['opt_f'])
+            sched_f.load_state_dict(snapshot['sched_f'])
     if opts.precondition:
         sde.backward_score = get_preconditioned_model(model_backward, sde)
         sampling_sde.backward_score = get_preconditioned_model(model_backward, sde)
@@ -172,7 +173,8 @@ def training(**opts):
                         'backward' : model_backward.module.state_dict(),
                         'backward_ema' : ema_backward.ema.state_dict(),
                         'opt_b' : routine.opt_b.state_dict(),
-                        'sched_b' : routine.sched_b.state_dict()
+                        'sched_b' : routine.sched_b.state_dict(),
+                        'itr' : cur_itr + 1
                     }
                     if is_sb:
                         snapshot.update({
@@ -188,8 +190,8 @@ def training(**opts):
                 sampling_shape = (n_samples, *out_shape)
                 labels = cond[:n_samples] if cond is not None else cond
                 
-                new_data, _ = unprocess(sde.sample(sampling_shape, device,cond=labels))
-                new_data_ema, _  = unprocess(sampling_sde.sample(sampling_shape, device, cond=labels))
+                new_data = unprocess(sde.sample(sampling_shape, device,cond=labels)[0])
+                new_data_ema  = unprocess(sampling_sde.sample(sampling_shape, device, cond=labels)[0])
                 path_samples = os.path.join(opts.dir,f'itr_{cur_itr+1}_{rank}.png')
                 path_samples_ema = os.path.join(opts.dir,f'itr_ema_{cur_itr+1}_{rank}.png')
                 plot_32_images(new_data, path_samples)
