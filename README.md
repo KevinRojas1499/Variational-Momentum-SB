@@ -48,6 +48,18 @@ torchrun --nproc-per-node 1 fid_score.py --path samples_280_75/ --ref_path cifar
 
 </details>
 
+<details><summary> Time Series Data</summary>
+
+- Training and evaluation of the time series datasets presented in our paper can be executed through:
+
+```shell script
+bash time_series/run_experiments.sh
+```
+the runs presented here are not meant to produce identical results to those presented in the paper. 
+
+
+</details>
+
 
 ## Citation
 If you find the code useful for your research, please consider citing our ICLR paper:
