@@ -18,7 +18,7 @@ pip install -r time_series/requirements.txt
 ``` 
 ## Checkpoints
 
-We provide our pre-trained checkpoint for CIFAR-10 [here](https://drive.google.com/drive/folders/1kettzSTqJnLCFqEvpFBxR3FbF1H2JtRm).
+We provide our pre-trained checkpoint for CIFAR-10 [here](https://drive.google.com/drive/folders/1KYj37DHXIMzc36gqXOyTCuRoD8nOEofm?usp=sharing).
 
 ## Training and evaluation
 
@@ -62,13 +62,12 @@ the runs presented here are not meant to produce identical results to those pres
 
 
 ## Citation
-If you find the code useful for your research, please consider citing our ICLR paper:
+If you find the code useful for your research, please consider citing our AISTATS paper:
 
 ```bib
-@inproceedings{dockhorn2022score,
-  title={Score-Based Generative Modeling with Critically-Damped Langevin Diffusion},
-  author={Tim Dockhorn and Arash Vahdat and Karsten Kreis},
-  booktitle={International Conference on Learning Representations (ICLR)},
-  year={2022}
+@inproceedings{rojasvariational,
+  title={Variational Schr$\backslash$" odinger Momentum Diffusion},
+  author={Rojas, Kevin and Tan, Yixin and Tao, Molei and Nevmyvaka, Yuriy and Deng, Wei},
+  booktitle={The 28th International Conference on Artificial Intelligence and Statistics}
 }
 ```
